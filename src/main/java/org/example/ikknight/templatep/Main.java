@@ -13,6 +13,8 @@ import org.example.ikknight.templatep.utils.Message;
 import static org.example.ikknight.templatep.utils.WebServer.*;
 
 public final class Main extends JavaPlugin {
+    public static long webServerRunTime = 0;
+    public static long ServerRunTime = webServerRunTime+10;
     public static int players = 0;
     BasicUtils basicUtils = new BasicUtils();
     Message msg = new Message("");
@@ -32,8 +34,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-
         PluginManager pm = getServer().getPluginManager();
         this.pdfFile = getDescription();
         basicUtils.setSuffix("[Minecraft.COM] ");
@@ -44,25 +44,42 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
         this.getLogger()
                 .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
-        try {
-            runServer();
-            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE RUNNING");
-        } catch (Exception e) {
-            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE FAILED THROWING ERROR NOW : \n "+e);
-        }
+
+        // Run the server setup in another thread
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    runServer();
+                    System.out.println("server started successfully");
+                } catch (Exception e) {
+                    System.out.println("server failed to start "+e);
+                }
+            }
+        }.runTaskAsynchronously(this); // Execute the task asynchronously
+
+        // Schedule a repeating task in another thread
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                msg.addFields("Online",players+"");
+                // Your task logic here
+
                 try {
-                    setMessage(msg.getMessage());
+
+                    setMessage(msg.addFields("Web Server Running For "+webServerRunTime+" Seconds | And Server Running For "+ServerRunTime+" Seconds", players + ""));
+
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            }
-        }.runTaskTimer(this, 20L * 10L /*<-- the initial delay */, 20L * 5L /*<-- the interval */);
+
+            } // runs every 5 seconds and init delay of 10
+
+        }.runTaskTimerAsynchronously(this, 20L * 10L /*<-- the initial delay */, 20L * 5L /*<-- the interval */);
     }
+
 
     @Override
     public void onDisable() {

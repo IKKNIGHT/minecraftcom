@@ -1,6 +1,5 @@
 package org.example.ikknight.templatep.utils;
 
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,32 +14,42 @@ import java.nio.file.Files;
 public class WebServer {
     static Server server;
     static String message = "PRE INIT";
+    static MessageHandler messageHandler = new MessageHandler(message);
+
     public static void setMessage(String newMessage) throws InterruptedException {
         message = newMessage;
         if (isServerOn()) {
-            System.out.println("Changing handler for message: " + newMessage);
-            server.setHandler(new MessageHandler(newMessage));
-            
+            //System.out.println("Changing handler for message: " + newMessage);
+            if (server.getHandler() instanceof MessageHandler) {
+                ((MessageHandler) server.getHandler()).setMessage(newMessage);
+            } else {
+                server.setHandler(new MessageHandler(newMessage));
+            }
         }
     }
 
-    public static boolean isServerOn(){
-        return server!=null&&server.isStarted();
+    public static boolean isServerOn() {
+        return server != null && server.isStarted();
     }
+
     public static void runServer() throws Exception {
         server = new Server(8080); // Create Jetty server on port 8080
-        server.setHandler(new MessageHandler(message)); // Set handler for incoming requests with the provided message
+        server.setHandler(messageHandler); // Set handler for incoming requests with the provided message
         server.start(); // Start the server
         System.out.println("Server started on port 8080");
         server.join(); // Wait for the server to finish
         setMessage("INIT");
     }
+
     public static void stopServer() throws Exception {
         if (isServerOn()) {
             server.stop(); // Stop the server
             System.out.println("Server stopped");
+        }else{
+            System.out.println("Server was never on");
         }
     }
+
     public static class MessageHandler extends AbstractHandler {
         private String message;
 
@@ -48,11 +57,15 @@ public class WebServer {
             this.message = message;
         }
 
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
         @Override
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
             if ("/message".equals(target)) {
                 // Serve the HTML file
-                File htmlFile = new File("server.html"); // Use relative path to the HTML file
+                File htmlFile = new File("frontend/server.html"); // Use relative path to the HTML file
                 response.setContentType("text/html;charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
                 baseRequest.setHandled(true);
@@ -66,5 +79,4 @@ public class WebServer {
             }
         }
     }
-
 }
