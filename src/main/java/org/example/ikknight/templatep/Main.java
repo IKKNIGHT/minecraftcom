@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.example.ikknight.templatep.commands.Say;
 import org.example.ikknight.templatep.listeners.PlayerJoin;
+import org.example.ikknight.templatep.listeners.PlayerLeave;
 import org.example.ikknight.templatep.utils.BasicUtils;
 import org.example.ikknight.templatep.utils.Message;
 import org.example.ikknight.templatep.utils.WebServer;
@@ -39,6 +40,7 @@ public final class Main extends JavaPlugin {
         this.getCommand("say").setExecutor(new Say());
         // init listeners
         this.getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
         this.getLogger()
                 .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
         new BukkitRunnable() {
