@@ -13,16 +13,31 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class WebServer {
-    static String message = "NO ";
-    public void setMessage(String Message){message = Message;}
-
+    static Server server;
+    static String message = "PRE INIT";
+    public static void setMessage(String Message){
+        message = Message;
+        if(isServerOn()){
+            System.out.println("changing handler for msg");
+            server.setHandler(new MessageHandler(message));
+        }
+    }
+    public static boolean isServerOn(){
+        return server!=null&&server.isStarted();
+    }
     public static void runServer() throws Exception {
-
-        Server server = new Server(8080); // Create Jetty server on port 8080
+        server = new Server(8080); // Create Jetty server on port 8080
         server.setHandler(new MessageHandler(message)); // Set handler for incoming requests with the provided message
         server.start(); // Start the server
         System.out.println("Server started on port 8080");
         server.join(); // Wait for the server to finish
+        setMessage("INIT");
+    }
+    public static void stopServer() throws Exception {
+        if (isServerOn()) {
+            server.stop(); // Stop the server
+            System.out.println("Server stopped");
+        }
     }
     public static class MessageHandler extends AbstractHandler {
         private String message;

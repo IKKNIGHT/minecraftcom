@@ -9,12 +9,12 @@ import org.example.ikknight.templatep.listeners.PlayerJoin;
 import org.example.ikknight.templatep.listeners.PlayerLeave;
 import org.example.ikknight.templatep.utils.BasicUtils;
 import org.example.ikknight.templatep.utils.Message;
-import org.example.ikknight.templatep.utils.WebServer;
+
+import static org.example.ikknight.templatep.utils.WebServer.*;
 
 public final class Main extends JavaPlugin {
     public static int players = 0;
     BasicUtils basicUtils = new BasicUtils();
-    WebServer website = new WebServer();
     Message msg = new Message("");
     private static Main plugin; // This is a static plugin instance that is private. Use getPlugin() as seen
     // further below.
@@ -45,7 +45,7 @@ public final class Main extends JavaPlugin {
         this.getLogger()
                 .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
         try {
-            website.runServer();
+            runServer();
             this.getLogger().info(basicUtils.getSuffix()+"WEBSITE RUNNING");
         } catch (Exception e) {
             this.getLogger().info(basicUtils.getSuffix()+"WEBSITE FAILED THROWING ERROR NOW : \n "+e);
@@ -55,13 +55,18 @@ public final class Main extends JavaPlugin {
             @Override
             public void run() {
                 msg.addFields("Online",players+"");
-                website.setMessage(msg.getMessage());
+                setMessage(msg.getMessage());
             }
-        }.runTaskTimer(plugin, 20L * 10L /*<-- the initial delay */, 20L * 5L /*<-- the interval */);
+        }.runTaskTimer(this, 20L * 10L /*<-- the initial delay */, 20L * 5L /*<-- the interval */);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        try {
+            stopServer();
+        } catch (Exception e) {
+            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE FAILED TO STOP THROWING ERROR NOW : \n "+e);
+        }
     }
 }
