@@ -20,7 +20,7 @@ public class WebServer {
         if (isServerOn()) {
             System.out.println("Changing handler for message: " + newMessage);
             server.setHandler(new MessageHandler(newMessage));
-            server.
+            
         }
     }
 
