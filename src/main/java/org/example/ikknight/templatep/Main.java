@@ -55,7 +55,11 @@ public final class Main extends JavaPlugin {
             @Override
             public void run() {
                 msg.addFields("Online",players+"");
-                setMessage(msg.getMessage());
+                try {
+                    setMessage(msg.getMessage());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }.runTaskTimer(this, 20L * 10L /*<-- the initial delay */, 20L * 5L /*<-- the interval */);
     }

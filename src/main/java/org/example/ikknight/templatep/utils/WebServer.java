@@ -15,13 +15,15 @@ import java.nio.file.Files;
 public class WebServer {
     static Server server;
     static String message = "PRE INIT";
-    public static void setMessage(String Message){
-        message = Message;
-        if(isServerOn()){
-            System.out.println("changing handler for msg");
-            server.setHandler(new MessageHandler(message));
+    public static void setMessage(String newMessage) throws InterruptedException {
+        message = newMessage;
+        if (isServerOn()) {
+            System.out.println("Changing handler for message: " + newMessage);
+            server.setHandler(new MessageHandler(newMessage));
+            server.
         }
     }
+
     public static boolean isServerOn(){
         return server!=null&&server.isStarted();
     }
