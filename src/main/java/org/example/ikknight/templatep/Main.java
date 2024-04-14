@@ -33,9 +33,10 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
 
+
         PluginManager pm = getServer().getPluginManager();
         this.pdfFile = getDescription();
-        basicUtils.setSuffix("[TEMPLATE-PLUGIN] ");
+        basicUtils.setSuffix("[Minecraft.COM] ");
         // init command
         this.getCommand("say").setExecutor(new Say());
         // init listeners
@@ -43,6 +44,13 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
         this.getLogger()
                 .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
+        try {
+            website.runServer();
+            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE RUNNING");
+        } catch (Exception e) {
+            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE FAILED THROWING ERROR NOW : \n "+e);
+        }
+
         new BukkitRunnable() {
             @Override
             public void run() {
