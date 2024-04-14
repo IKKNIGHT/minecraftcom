@@ -1,0 +1,10 @@
+name: TEMPLATE-PLUGIN
+version: '1.0-SNAPSHOT'
+main: org.example.ikknight.templatep.Main
+api-version: '1.20'
+commands:
+  say:
+    description: says whatever you tell it to
+    usage: /<command> <something>
+
+# Feel free to change this as you wish!

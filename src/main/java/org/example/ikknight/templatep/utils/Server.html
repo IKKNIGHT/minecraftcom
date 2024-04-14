@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Display</title>
+</head>
+<body>
+<h1>Message Display</h1>
+<div id="message"></div>
+
+<script>
+    // Fetch the message from the server
+    fetch('http://localhost:8080')
+        .then(response => response.text())
+        .then(message => {
+            // Update the message div with the received message
+            document.getElementById('message').innerText = message;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
+</body>
+</html>
