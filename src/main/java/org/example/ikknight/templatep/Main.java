@@ -4,6 +4,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.example.ikknight.templatep.commands.WebRestart;
 import org.example.ikknight.templatep.commands.Say;
 import org.example.ikknight.templatep.listeners.PlayerJoin;
 import org.example.ikknight.templatep.listeners.PlayerLeave;
@@ -39,6 +40,7 @@ public final class Main extends JavaPlugin {
         basicUtils.setSuffix("[Minecraft.COM] ");
         // init command
         this.getCommand("say").setExecutor(new Say());
+        this.getCommand("webrestart").setExecutor(new WebRestart());
         // init listeners
         this.getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
@@ -87,7 +89,7 @@ public final class Main extends JavaPlugin {
         try {
             stopServer();
         } catch (Exception e) {
-            this.getLogger().info(basicUtils.getSuffix()+"WEBSITE FAILED TO STOP THROWING ERROR NOW : \n "+e);
+            System.out.println("Error in stopping the server? Usually caused by reloading... error : \n"+e);
         }
     }
 }

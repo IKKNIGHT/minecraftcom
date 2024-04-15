@@ -6,5 +6,8 @@ commands:
   say:
     description: says whatever you tell it to
     usage: /<command> <something>
+  webrestart:
+    description: restarts the web server
+    usage: /<command>
 
 # Feel free to change this as you wish!

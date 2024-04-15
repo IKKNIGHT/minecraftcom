@@ -7,9 +7,10 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 
 public class WebServer {
     static Server server;
@@ -64,12 +65,26 @@ public class WebServer {
         @Override
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
             if ("/message".equals(target)) {
-                // Serve the HTML file
-                File htmlFile = new File("frontend/server.html"); // Use relative path to the HTML file
-                response.setContentType("text/html;charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                baseRequest.setHandled(true);
-                Files.copy(htmlFile.toPath(), response.getOutputStream());
+                // Load HTML file using a File object
+                File htmlFile = new File("Server.html");
+                if (htmlFile.exists()) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(htmlFile))) {
+                        // Serve the HTML content
+                        StringBuilder content = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            content.append(line).append("\n");
+                        }
+                        response.setContentType("text/html;charset=utf-8");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        baseRequest.setHandled(true);
+                        response.getWriter().println(content.toString());
+                    }
+                } else {
+                    // HTML file not found
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    baseRequest.setHandled(true);
+                }
             } else {
                 // Respond with the message
                 response.setContentType("text/plain;charset=utf-8");
@@ -78,5 +93,6 @@ public class WebServer {
                 response.getWriter().println(message);
             }
         }
+
     }
 }
