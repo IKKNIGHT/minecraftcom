@@ -16,7 +16,7 @@ public class Message {
     }
     public String addFields(String status, String players){
         webServerRunTime +=5; // interval
-        ServerRunTime = webServerRunTime+10; // init delay
+        ServerRunTime +=5;
         return status+", And "+players+" players online";
     }
     public String getMessage() {

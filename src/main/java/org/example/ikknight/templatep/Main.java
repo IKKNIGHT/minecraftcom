@@ -15,7 +15,7 @@ import static org.example.ikknight.templatep.utils.WebServer.*;
 
 public final class Main extends JavaPlugin {
     public static long webServerRunTime = 0;
-    public static long ServerRunTime = webServerRunTime+10;
+    public static long ServerRunTime = 10;
     public static int players = 0;
     BasicUtils basicUtils = new BasicUtils();
     Message msg = new Message("");
@@ -32,22 +32,8 @@ public final class Main extends JavaPlugin {
         return pdfFile;
     }
 
+    public static void safeStartServer(Main main){
 
-    @Override
-    public void onEnable() {
-        PluginManager pm = getServer().getPluginManager();
-        this.pdfFile = getDescription();
-        basicUtils.setSuffix("[Minecraft.COM] ");
-        // init command
-        this.getCommand("say").setExecutor(new Say());
-        this.getCommand("webrestart").setExecutor(new WebRestart());
-        // init listeners
-        this.getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
-        this.getLogger()
-                .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
-
-        // Run the server setup in another thread
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -58,7 +44,39 @@ public final class Main extends JavaPlugin {
                     System.out.println("server failed to start "+e);
                 }
             }
-        }.runTaskAsynchronously(this); // Execute the task asynchronously
+        }.runTaskAsynchronously(main); // Execute the task asynchronously
+        webServerRunTime=0;
+    }
+    public static void safeStopServer(Main main){
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    stopServer();
+                    System.out.println("server started successfully");
+                } catch (Exception e) {
+                    System.out.println("server failed to start "+e);
+                }
+            }
+        }.runTaskAsynchronously(main); // Execute the task asynchronously
+    }
+
+    @Override
+    public void onEnable() {
+        PluginManager pm = getServer().getPluginManager();
+        this.pdfFile = getDescription();
+        basicUtils.setSuffix("[Minecraft.COM] ");
+        // init command
+        this.getCommand("say").setExecutor(new Say());
+        this.getCommand("webrestart").setExecutor(new WebRestart(this));
+        // init listeners
+        this.getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
+        this.getLogger()
+                .info(this.pdfFile.getName() + " - Version " + this.pdfFile.getVersion() + " - has been enabled!");
+
+        // Run the server setup in another thread
+        safeStartServer(this);
 
         // Schedule a repeating task in another thread
 
@@ -85,11 +103,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-        try {
-            stopServer();
-        } catch (Exception e) {
-            System.out.println("Error in stopping the server? Usually caused by reloading... error : \n"+e);
-        }
+
     }
 }

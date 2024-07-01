@@ -34,12 +34,14 @@ public class WebServer {
     }
 
     public static void runServer() throws Exception {
+
         server = new Server(8080); // Create Jetty server on port 8080
         server.setHandler(messageHandler); // Set handler for incoming requests with the provided message
         server.start(); // Start the server
         System.out.println("Server started on port 8080");
         server.join(); // Wait for the server to finish
         setMessage("INIT");
+
     }
 
     public static void stopServer() throws Exception {
@@ -66,8 +68,9 @@ public class WebServer {
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
             if ("/message".equals(target)) {
                 // Load HTML file using a File object
-                File htmlFile = new File("Server.html");
+                File htmlFile = new File("utils/Server.html"); // Corrected file path
                 if (htmlFile.exists()) {
+                    System.out.println("HTML FILE EXISTS");
                     try (BufferedReader reader = new BufferedReader(new FileReader(htmlFile))) {
                         // Serve the HTML content
                         StringBuilder content = new StringBuilder();
@@ -79,8 +82,10 @@ public class WebServer {
                         response.setStatus(HttpServletResponse.SC_OK);
                         baseRequest.setHandled(true);
                         response.getWriter().println(content.toString());
+                        System.out.println("SERVING HTML CONTENT");
                     }
                 } else {
+                    System.out.println("HTML FILE DOES NOT EXIST");
                     // HTML file not found
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     baseRequest.setHandled(true);
@@ -93,6 +98,7 @@ public class WebServer {
                 response.getWriter().println(message);
             }
         }
+
 
     }
 }
